@@ -117,8 +117,12 @@ async def redis_health_check():
 app.include_router(auth.router)
 
 # Import and include other routers
-from app.api import bookings
+from app.api import bookings, customers, providers, search, reviews
 app.include_router(bookings.router)
+app.include_router(customers.router)
+app.include_router(providers.router)
+app.include_router(search.router)
+app.include_router(reviews.router)
 
 
 @app.get("/")
