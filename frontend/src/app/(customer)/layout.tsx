@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/auth-store";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
+import { ChatWidget } from "@/components/shared/chat-widget";
 
 export default function CustomerLayout({
   children,
@@ -35,5 +36,11 @@ export default function CustomerLayout({
     return null;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <ChatWidget />
+    </>
+  );
 }
+

@@ -3,8 +3,11 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    domains: ["localhost"],
     remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+      },
       {
         protocol: "https",
         hostname: "**",
@@ -13,8 +16,6 @@ const nextConfig: NextConfig = {
   },
   // Enable strict mode for better development experience
   reactStrictMode: true,
-  // Optimize fonts
-  optimizeFonts: true,
 };
 
 export default nextConfig;
