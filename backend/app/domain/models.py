@@ -483,3 +483,45 @@ class PaginatedResponse(BaseModel):
             total_pages=total_pages
         )
 
+
+# ==================== Chat Models ====================
+
+class ChatMessageCreate(BaseModel):
+    """Create a new chat message."""
+    message: str = Field(..., min_length=1, max_length=5000)
+    conversation_id: Optional[UUID] = None  # If None, creates new conversation
+
+
+class ChatMessage(BaseModel):
+    """Chat message response."""
+    id: UUID
+    role: str  # "user" or "assistant"
+    content: str
+    created_at: datetime
+    metadata: Optional[Dict[str, Any]] = None
+    
+    class Config:
+        from_attributes = True
+
+
+class ChatConversation(BaseModel):
+    """Chat conversation response."""
+    id: UUID
+    title: Optional[str]
+    session_id: str
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+    messages: List[ChatMessage] = []
+    
+    class Config:
+        from_attributes = True
+
+
+class ChatResponse(BaseModel):
+    """Response from chat endpoint."""
+    message: str
+    conversation_id: UUID
+    session_id: str
+    metadata: Optional[Dict[str, Any]] = None
+

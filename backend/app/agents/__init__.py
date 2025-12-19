@@ -5,6 +5,7 @@ from .scheduling_agent import SchedulingAgent
 from .pricing_agent import PricingAgent
 from .review_agent import ReviewAnalysisAgent
 from .recommendation_agent import RecommendationAgent
+from .chat_agent import CustomerChatAgent, ProviderChatAgent
 
 __all__ = [
     "BaseAgent",
@@ -13,5 +14,7 @@ __all__ = [
     "PricingAgent",
     "ReviewAnalysisAgent",
     "RecommendationAgent",
+    "CustomerChatAgent",
+    "ProviderChatAgent",
 ]
 

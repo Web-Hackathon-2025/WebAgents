@@ -33,6 +33,7 @@ class User(Base):
     customer_profile = relationship("CustomerProfile", back_populates="user", uselist=False)
     provider_profile = relationship("ProviderProfile", back_populates="user", uselist=False)
     notifications = relationship("Notification", back_populates="user")
+    chat_conversations = relationship("ChatConversation", back_populates="user")
 
 
 class CustomerProfile(Base):
@@ -347,4 +348,37 @@ class Dispute(Base):
     
     # Relationships
     booking = relationship("Booking", back_populates="dispute")
+
+
+class ChatConversation(Base):
+    """Chat conversation between user and AI assistant."""
+    __tablename__ = "chat_conversations"
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
+    role = Column(SQLEnum("customer", "provider", name="user_role"), nullable=False, index=True)
+    title = Column(String(255))  # Auto-generated from first message
+    session_id = Column(String(255), unique=True, nullable=False, index=True)  # For OpenAI Agents SDK
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(TIMESTAMP, server_default=func.now(), nullable=False, index=True)
+    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), nullable=False)
+    
+    # Relationships
+    user = relationship("User")
+    messages = relationship("ChatMessage", back_populates="conversation", cascade="all, delete-orphan", order_by="ChatMessage.created_at")
+
+
+class ChatMessage(Base):
+    """Individual message in a chat conversation."""
+    __tablename__ = "chat_messages"
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    conversation_id = Column(UUID(as_uuid=True), ForeignKey("chat_conversations.id"), nullable=False, index=True)
+    role = Column(SQLEnum("user", "assistant", name="message_role"), nullable=False)
+    content = Column(Text, nullable=False)
+    message_metadata = Column(JSONB)  # Store agent handoffs, tool calls, etc.
+    created_at = Column(TIMESTAMP, server_default=func.now(), nullable=False, index=True)
+    
+    # Relationships
+    conversation = relationship("ChatConversation", back_populates="messages")
 
