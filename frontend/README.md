@@ -1,36 +1,149 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Karigar Frontend
+
+A modern, responsive frontend for the Karigar hyperlocal services marketplace built with Next.js 14, TypeScript, and Tailwind CSS.
+
+## Features
+
+- 🎨 **Modern UI/UX** - Clean, professional design with Tailwind CSS
+- 🔐 **Authentication** - JWT-based auth with role-based access control
+- 👥 **Multi-role Support** - Customer, Provider, and Admin portals
+- 🔍 **Search & Discovery** - Find service providers with filters and location-based search
+- 📱 **Responsive Design** - Mobile-first approach with excellent mobile experience
+- ⚡ **Performance** - Optimized with Next.js App Router and code splitting
+- 🎯 **Type Safety** - Full TypeScript implementation
+- 🎨 **Component Library** - Reusable UI components built with Radix UI
+
+## Tech Stack
+
+- **Framework:** Next.js 14+ (App Router)
+- **Language:** TypeScript (strict mode)
+- **Styling:** Tailwind CSS + Custom CSS Variables
+- **UI Components:** Radix UI + Custom components
+- **State Management:** Zustand with persistence
+- **Forms:** React Hook Form + Zod validation
+- **Icons:** Lucide React
+- **Animations:** Framer Motion
+- **Notifications:** Sonner
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ and npm
+- Backend API running (see backend README)
+
+### Installation
+
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Create `.env.local` file:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_key_here
+NEXT_PUBLIC_APP_NAME=Karigar
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── (auth)/            # Authentication routes
+│   ├── (customer)/        # Customer portal routes
+│   ├── (provider)/        # Provider portal routes
+│   ├── (admin)/           # Admin dashboard routes
+│   └── layout.tsx         # Root layout
+├── components/
+│   ├── ui/                # Base UI components
+│   ├── layout/           # Layout components
+│   ├── auth/             # Auth components
+│   ├── customer/         # Customer-specific components
+│   ├── provider/         # Provider-specific components
+│   ├── admin/            # Admin-specific components
+│   └── shared/           # Shared components
+├── lib/
+│   ├── api/              # API client modules
+│   └── utils/            # Utility functions
+├── stores/               # Zustand state stores
+├── hooks/                # Custom React hooks
+└── types/                # TypeScript type definitions
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Available Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
 
-## Deploy on Vercel
+## Key Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Authentication
+- Login/Registration for Customers and Providers
+- JWT token management
+- Protected routes with middleware
+- Role-based access control
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Customer Portal
+- Dashboard with booking overview
+- Search and discover providers
+- View provider profiles
+- Create and manage bookings
+- Review and rate services
+
+### Provider Portal
+- Dashboard with booking requests
+- Service management
+- Booking management
+- Availability calendar
+- Reviews and ratings
+- Analytics dashboard
+
+### Admin Dashboard
+- User management
+- Provider approval workflow
+- Booking oversight
+- Review moderation
+- Dispute resolution
+- Platform analytics
+
+## Design System
+
+The app uses a comprehensive design system with:
+- Custom color palette (primary, secondary, role-specific accents)
+- Typography scale (Inter font family)
+- Spacing system (Tailwind scale)
+- Border radius variants
+- Shadow elevation system
+- Animation patterns
+
+## API Integration
+
+The frontend communicates with the backend API through:
+- Base API client with authentication
+- Error handling and retry logic
+- Request/response interceptors
+- Type-safe API modules
+
+## Contributing
+
+1. Follow the existing code structure
+2. Maintain TypeScript strict mode
+3. Use the design system components
+4. Write accessible, semantic HTML
+5. Test on mobile devices
+
+## License
+
+Private - All rights reserved

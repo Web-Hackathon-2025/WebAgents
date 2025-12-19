@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Header } from "@/components/layout/header";
+import { ErrorBoundary } from "@/components/shared/error-boundary";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -46,9 +47,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="antialiased">
-        <Header />
-        {children}
-        <Toaster position="top-right" richColors />
+        <ErrorBoundary>
+          <Header />
+          {children}
+          <Toaster position="top-right" richColors />
+        </ErrorBoundary>
       </body>
     </html>
   );
