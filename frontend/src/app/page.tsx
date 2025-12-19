@@ -1,7 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, Shield, Clock, Star, Wrench, Zap, Home, Hammer, CheckCircle2, Sparkles } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Search, Shield, Clock, Star, Wrench, Zap, Home, Hammer, CheckCircle2, Sparkles, MapPin, Phone } from "lucide-react";
+import { mockProviders, mockServices, mockReviews } from "@/lib/mock-data";
+import { useEffect, useState } from "react";
 
 export default function HomePage() {
   return (

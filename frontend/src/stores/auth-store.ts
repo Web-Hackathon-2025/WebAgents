@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import { User, LoginCredentials, RegisterData, CustomerRegisterData, ProviderRegisterData } from "@/types/auth";
 import { authApi } from "@/lib/api/auth";
 import { storage } from "@/lib/utils/storage";
+import { mockDataService } from "@/lib/mock-data";
 
 interface AuthState {
   user: User | null;
@@ -31,7 +32,14 @@ export const useAuthStore = create<AuthState>()(
       login: async (credentials: LoginCredentials) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await authApi.login(credentials);
+          let response;
+          
+          // Use mock data if enabled
+          if (mockDataService.isMockModeEnabled()) {
+            response = await mockDataService.mockLogin(credentials.email, credentials.password);
+          } else {
+            response = await authApi.login(credentials);
+          }
           
           // Store access token
           if (typeof window !== "undefined") {
@@ -130,7 +138,15 @@ export const useAuthStore = create<AuthState>()(
 
         set({ isLoading: true });
         try {
-          const user = await authApi.getCurrentUser();
+          let user;
+          
+          // Use mock data if enabled and token is a mock token
+          if (mockDataService.isMockModeEnabled() || token.startsWith("mock-token-")) {
+            user = await mockDataService.mockGetCurrentUser(token);
+          } else {
+            user = await authApi.getCurrentUser();
+          }
+          
           set({
             user,
             isAuthenticated: true,
