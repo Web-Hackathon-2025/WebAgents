@@ -152,7 +152,7 @@ class BaseAgent(ABC):
     
     async def _run_agent(self, user_message: str, session_id: str) -> str:
         """Run the agent using OpenAI Agents SDK Runner."""
-        # Use Runner.run() class method - it's async and returns a result with final_output
+        # Use Runner.run() - it's async and returns a result
         # According to SDK docs: result = await Runner.run(agent, message)
         result = await Runner.run(
             self.agent,
