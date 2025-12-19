@@ -6,7 +6,7 @@ pydantic>=2.10.0
 pydantic-settings>=2.1.0
 
 # Database
-sqlalchemy==2.0.23
+sqlalchemy>=2.0.25
 alembic==1.12.1
 geoalchemy2==0.14.2
 asyncpg>=0.29.0
