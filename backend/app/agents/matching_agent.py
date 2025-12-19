@@ -1,6 +1,6 @@
-"""Matching agent for intelligent provider matching."""
+"""Matching agent for intelligent provider matching using OpenAI Agents SDK."""
 from typing import Dict, Any, List
-from decimal import Decimal
+import json
 
 from app.agents.base import BaseAgent
 
@@ -9,10 +9,7 @@ class MatchingAgent(BaseAgent):
     """Agent for matching customers with best-fit service providers."""
     
     def __init__(self):
-        super().__init__("matching_agent")
-    
-    def get_system_prompt(self) -> str:
-        return """You are a service provider matching agent. Your role is to analyze customer requirements and find the best matching service providers.
+        instructions = """You are a service provider matching agent. Your role is to analyze customer requirements and find the best matching service providers.
 
 Consider:
 1. Service category and specific requirements
@@ -37,10 +34,20 @@ Return a JSON response with:
     ],
     "summary": "overall matching summary"
 }"""
+        
+        # Can hand off to scheduling agent if needed
+        super().__init__(
+            agent_name="matching_agent",
+            instructions=instructions,
+            handoffs=["scheduling_agent"]
+        )
+    
+    def get_handoff_description(self) -> str:
+        """Description for when to hand off to other agents."""
+        return "Hand off to scheduling_agent when customer needs help finding available time slots after provider selection."
     
     def _parse_response(self, content: str, context: Dict[str, Any]) -> Dict[str, Any]:
         """Parse matching agent response."""
-        import json
         import re
         
         try:
@@ -102,4 +109,3 @@ Return a JSON response with:
             "summary": f"Fallback matching used due to error: {error}",
             "fallback": True
         }
-

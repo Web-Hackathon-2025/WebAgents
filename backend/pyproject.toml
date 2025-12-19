@@ -1,3 +1,13 @@
+[project]
+name = "karigar-backend"
+version = "0.1.0"
+description = "Karigar - Hyperlocal Services Marketplace Backend"
+authors = [
+    {name = "Karigar Team"}
+]
+requires-python = ">=3.11"
+dependencies = []
+
 [tool.poetry]
 name = "karigar-backend"
 version = "0.1.0"

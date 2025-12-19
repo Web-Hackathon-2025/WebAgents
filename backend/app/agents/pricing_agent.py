@@ -1,6 +1,5 @@
-"""Pricing agent for dynamic pricing recommendations."""
+"""Pricing agent for dynamic pricing recommendations using OpenAI Agents SDK."""
 from typing import Dict, Any
-from decimal import Decimal
 
 from app.agents.base import BaseAgent
 
@@ -9,10 +8,7 @@ class PricingAgent(BaseAgent):
     """Agent for providing dynamic pricing recommendations."""
     
     def __init__(self):
-        super().__init__("pricing_agent")
-    
-    def get_system_prompt(self) -> str:
-        return """You are a pricing recommendation agent. Analyze market conditions and suggest fair pricing.
+        instructions = """You are a pricing recommendation agent. Analyze market conditions and suggest fair pricing.
 
 Consider:
 1. Base service rates in the area
@@ -41,11 +37,21 @@ Return a JSON response with:
     },
     "market_comparison": "how this compares to market rates"
 }"""
+        
+        super().__init__(
+            agent_name="pricing_agent",
+            instructions=instructions,
+            handoffs=[]
+        )
+    
+    def get_handoff_description(self) -> str:
+        """Description for when to hand off to other agents."""
+        return "This agent handles pricing and typically doesn't hand off to other agents."
     
     def _parse_response(self, content: str, context: Dict[str, Any]) -> Dict[str, Any]:
         """Parse pricing agent response."""
-        import json
         import re
+        import json
         
         try:
             json_match = re.search(r'\{.*\}', content, re.DOTALL)
@@ -90,4 +96,3 @@ Return a JSON response with:
         pricing["reasoning"] = f"Fallback pricing used due to error: {error}"
         pricing["fallback"] = True
         return pricing
-

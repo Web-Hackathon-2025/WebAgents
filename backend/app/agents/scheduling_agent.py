@@ -1,4 +1,4 @@
-"""Scheduling agent for optimal time slot suggestions."""
+"""Scheduling agent for optimal time slot suggestions using OpenAI Agents SDK."""
 from typing import Dict, Any, List
 from datetime import datetime, timedelta
 
@@ -9,10 +9,7 @@ class SchedulingAgent(BaseAgent):
     """Agent for finding optimal time slots and resolving scheduling conflicts."""
     
     def __init__(self):
-        super().__init__("scheduling_agent")
-    
-    def get_system_prompt(self) -> str:
-        return """You are a scheduling optimization agent. Your role is to suggest the best time slots for service bookings.
+        instructions = """You are a scheduling optimization agent. Your role is to suggest the best time slots for service bookings.
 
 Consider:
 1. Customer's preferred time windows
@@ -44,11 +41,21 @@ Return a JSON response with:
     ],
     "recommendations": "overall scheduling recommendations"
 }"""
+        
+        super().__init__(
+            agent_name="scheduling_agent",
+            instructions=instructions,
+            handoffs=[]  # Scheduling agent typically doesn't hand off
+        )
+    
+    def get_handoff_description(self) -> str:
+        """Description for when to hand off to other agents."""
+        return "This agent handles scheduling and typically doesn't hand off to other agents."
     
     def _parse_response(self, content: str, context: Dict[str, Any]) -> Dict[str, Any]:
         """Parse scheduling agent response."""
-        import json
         import re
+        import json
         
         try:
             json_match = re.search(r'\{.*\}', content, re.DOTALL)
@@ -105,4 +112,3 @@ Return a JSON response with:
             "recommendations": f"Fallback scheduling used due to error: {error}",
             "fallback": True
         }
-

@@ -1,4 +1,4 @@
-"""Recommendation agent for personalized provider recommendations."""
+"""Recommendation agent for personalized provider recommendations using OpenAI Agents SDK."""
 from typing import Dict, Any, List
 
 from app.agents.base import BaseAgent
@@ -8,10 +8,7 @@ class RecommendationAgent(BaseAgent):
     """Agent for personalized provider recommendations based on user history."""
     
     def __init__(self):
-        super().__init__("recommendation_agent")
-    
-    def get_system_prompt(self) -> str:
-        return """You are a recommendation agent. Suggest service providers based on user preferences and history.
+        instructions = """You are a recommendation agent. Suggest service providers based on user preferences and history.
 
 Consider:
 1. User's past bookings and ratings
@@ -40,11 +37,21 @@ Return a JSON response with:
     },
     "summary": "overall recommendation summary"
 }"""
+        
+        super().__init__(
+            agent_name="recommendation_agent",
+            instructions=instructions,
+            handoffs=["matching_agent"]  # Can hand off to matching agent for detailed matching
+        )
+    
+    def get_handoff_description(self) -> str:
+        """Description for when to hand off to other agents."""
+        return "Hand off to matching_agent when detailed provider matching is needed for specific service requests."
     
     def _parse_response(self, content: str, context: Dict[str, Any]) -> Dict[str, Any]:
         """Parse recommendation agent response."""
-        import json
         import re
+        import json
         
         try:
             json_match = re.search(r'\{.*\}', content, re.DOTALL)
@@ -93,4 +100,3 @@ Return a JSON response with:
             "summary": f"Fallback recommendations used due to error: {error}",
             "fallback": True
         }
-

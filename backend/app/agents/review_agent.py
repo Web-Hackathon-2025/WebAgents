@@ -1,6 +1,5 @@
-"""Review analysis agent for sentiment analysis and fake review detection."""
+"""Review analysis agent for sentiment analysis and fake review detection using OpenAI Agents SDK."""
 from typing import Dict, Any
-from decimal import Decimal
 
 from app.agents.base import BaseAgent
 
@@ -9,10 +8,7 @@ class ReviewAnalysisAgent(BaseAgent):
     """Agent for analyzing review sentiment and detecting fake reviews."""
     
     def __init__(self):
-        super().__init__("review_agent")
-    
-    def get_system_prompt(self) -> str:
-        return """You are a review analysis agent. Analyze customer reviews for quality and authenticity.
+        instructions = """You are a review analysis agent. Analyze customer reviews for quality and authenticity.
 
 Evaluate:
 1. Sentiment (positive, neutral, negative)
@@ -34,11 +30,21 @@ Return a JSON response with:
     "summary": "overall analysis summary",
     "red_flags": ["any", "suspicious", "indicators"]
 }"""
+        
+        super().__init__(
+            agent_name="review_agent",
+            instructions=instructions,
+            handoffs=[]
+        )
+    
+    def get_handoff_description(self) -> str:
+        """Description for when to hand off to other agents."""
+        return "This agent handles review analysis and typically doesn't hand off to other agents."
     
     def _parse_response(self, content: str, context: Dict[str, Any]) -> Dict[str, Any]:
         """Parse review analysis agent response."""
-        import json
         import re
+        import json
         
         try:
             json_match = re.search(r'\{.*\}', content, re.DOTALL)
@@ -85,4 +91,3 @@ Return a JSON response with:
         analysis["summary"] = f"Fallback analysis used due to error: {error}"
         analysis["fallback"] = True
         return analysis
-
