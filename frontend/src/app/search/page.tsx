@@ -80,7 +80,7 @@ export default function SearchPage() {
         <div className="flex justify-center py-12">
           <LoadingSpinner size="lg" />
         </div>
-      ) : results.length === 0 ? (
+      ) : !results || results.length === 0 ? (
         <EmptyState
           icon={<SearchIcon className="h-12 w-12 text-text-secondary" />}
           title="No providers found"
@@ -99,7 +99,7 @@ export default function SearchPage() {
                     <div>
                       <CardTitle className="text-xl">{provider.businessName}</CardTitle>
                       <CardDescription className="mt-1">
-                        {provider.serviceCategories.join(", ")}
+                        {provider.serviceCategories?.join(", ") || "Services available"}
                       </CardDescription>
                     </div>
                     {provider.isVerified && (
@@ -117,14 +117,18 @@ export default function SearchPage() {
                       />
                     )}
                     
-                    <div className="flex items-center gap-2 text-sm text-text-secondary">
-                      <MapPin className="h-4 w-4" />
-                      <span>{provider.businessAddress.address}</span>
-                    </div>
+                    {provider.businessAddress?.address && (
+                      <div className="flex items-center gap-2 text-sm text-text-secondary">
+                        <MapPin className="h-4 w-4" />
+                        <span>{provider.businessAddress.address}</span>
+                      </div>
+                    )}
 
-                    <div className="flex items-center gap-2 text-sm text-text-secondary">
-                      <span>Service Radius: {provider.serviceRadius} km</span>
-                    </div>
+                    {provider.serviceRadius && (
+                      <div className="flex items-center gap-2 text-sm text-text-secondary">
+                        <span>Service Radius: {provider.serviceRadius} km</span>
+                      </div>
+                    )}
 
                     <div className="pt-2">
                       <Button asChild className="w-full">
@@ -141,3 +145,4 @@ export default function SearchPage() {
     </div>
   );
 }
+

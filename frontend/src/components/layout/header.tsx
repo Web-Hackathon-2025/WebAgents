@@ -13,8 +13,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuthStore } from "@/stores/auth-store";
-import { User, LogOut, Settings, Menu } from "lucide-react";
+import { User, LogOut, Settings, Menu, UserPlus, LogIn } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { mockDataService, DEMO_CREDENTIALS } from "@/lib/mock-data";
 
 export function Header() {
   const pathname = usePathname();

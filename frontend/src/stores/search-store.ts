@@ -57,7 +57,7 @@ export const useSearchStore = create<SearchState>((set, get) => ({
       const response = await searchApi.searchProviders(searchFilters);
       
       set({
-        results: response.items,
+        results: response.items || [],
         hasMore: response.page < response.totalPages,
         pagination: {
           total: response.total,
@@ -68,9 +68,12 @@ export const useSearchStore = create<SearchState>((set, get) => ({
         isLoading: false,
       });
     } catch (error: any) {
+      console.error('Search error:', error);
       set({
+        results: [],
         isLoading: false,
-        error: error.message || "Search failed",
+        hasMore: false,
+        pagination: null,
       });
     }
   },
