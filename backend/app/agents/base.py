@@ -152,8 +152,8 @@ class BaseAgent(ABC):
     
     async def _run_agent(self, user_message: str, session_id: str) -> str:
         """Run the agent using OpenAI Agents SDK Runner."""
-        # Use Runner.run() class method with agent and message
-        # The SDK handles model and API key from environment or passed parameters
+        # Use Runner.run() class method - it's async and returns a result with final_output
+        # According to SDK docs: result = await Runner.run(agent, message)
         result = await Runner.run(
             self.agent,
             user_message,
@@ -162,9 +162,11 @@ class BaseAgent(ABC):
             session_id=session_id
         )
         
-        # Extract the final message content
-        # The result should be a string or have a content attribute
-        if isinstance(result, str):
+        # Extract the final output from result
+        # The result object has a final_output attribute according to SDK docs
+        if hasattr(result, 'final_output'):
+            return result.final_output
+        elif isinstance(result, str):
             return result
         elif hasattr(result, 'messages') and result.messages:
             return result.messages[-1].content

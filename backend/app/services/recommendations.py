@@ -1,5 +1,5 @@
 """Recommendation service using AI recommendation agent."""
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 

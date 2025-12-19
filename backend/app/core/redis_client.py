@@ -13,11 +13,17 @@ class RedisClient:
     
     async def connect(self):
         """Connect to Redis."""
-        self.client = await redis.from_url(
-            settings.REDIS_URL,
-            encoding="utf-8",
-            decode_responses=True
-        )
+        try:
+            self.client = await redis.from_url(
+                settings.REDIS_URL,
+                encoding="utf-8",
+                decode_responses=True
+            )
+            # Test connection
+            await self.client.ping()
+        except Exception as e:
+            self.client = None
+            raise ConnectionError(f"Failed to connect to Redis at {settings.REDIS_URL}: {str(e)}")
     
     async def disconnect(self):
         """Disconnect from Redis."""
