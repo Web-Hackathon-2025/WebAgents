@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Search, Shield, Clock, Star, Wrench, Zap, Home, Hammer, CheckCircle2, Sparkles, MapPin, Phone } from "lucide-react";
 import { mockProviders, mockServices, mockReviews } from "@/lib/mock-data";
+import { DemoModeToggle } from "@/components/shared/demo-mode-toggle";
 import { useEffect, useState } from "react";
 
 export default function HomePage() {
@@ -346,6 +347,21 @@ export default function HomePage() {
               </Button>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Demo Mode Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="mb-8 text-center">
+            <h2 className="mb-4 text-3xl font-bold text-gray-900">
+              Try Our Demo
+            </h2>
+            <p className="mx-auto max-w-2xl text-lg text-gray-600">
+              Experience all features with sample data - no registration required!
+            </p>
+          </div>
+          <DemoModeToggle />
         </div>
       </section>
 
