@@ -10,6 +10,8 @@ import { mockProviders, mockServices, mockReviews } from "@/lib/mock-data";
 import { useEffect, useState } from "react";
 
 export default function HomePage() {
+  const [featuredProviders, setFeaturedProviders] = useState(mockProviders.slice(0, 3));
+  const [recentReviews, setRecentReviews] = useState(mockReviews.slice(0, 3));
   return (
     <div className="flex min-h-screen flex-col">
       {/* Hero Section - Modern Design */}
@@ -150,8 +152,142 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Featured Providers Section */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="mb-16 text-center">
+            <h2 className="mb-4 text-4xl font-bold text-gray-900 sm:text-5xl">
+              Featured Service Providers
+            </h2>
+            <p className="mx-auto max-w-2xl text-lg text-gray-600">
+              Meet some of our top-rated professionals ready to help you
+            </p>
+          </div>
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {featuredProviders.map((provider) => (
+              <Card key={provider.id} className="group h-full border-2 border-transparent transition-all duration-300 hover:border-blue-200 hover:shadow-xl">
+                <CardHeader className="text-center">
+                  <div className="mx-auto mb-4">
+                    <Avatar className="h-20 w-20">
+                      <AvatarImage src={provider.avatar} alt={provider.fullName} />
+                      <AvatarFallback className="text-lg">
+                        {provider.fullName.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
+                  <CardTitle className="text-xl">{provider.businessName}</CardTitle>
+                  <CardDescription className="text-base font-medium text-gray-700">
+                    {provider.fullName}
+                  </CardDescription>
+                  <div className="flex items-center justify-center gap-2 mt-2">
+                    <div className="flex items-center gap-1">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="font-semibold">{provider.rating}</span>
+                      <span className="text-gray-500">({provider.reviewCount} reviews)</span>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <MapPin className="h-4 w-4" />
+                      <span>{provider.businessAddress.address}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Phone className="h-4 w-4" />
+                      <span>{provider.phone}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {provider.serviceCategories.slice(0, 2).map((category) => (
+                        <Badge key={category} variant="secondary" className="text-xs">
+                          {category.replace('-', ' ')}
+                        </Badge>
+                      ))}
+                      {provider.serviceCategories.length > 2 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{provider.serviceCategories.length - 2} more
+                        </Badge>
+                      )}
+                    </div>
+                    {provider.isVerified && (
+                      <div className="flex items-center gap-2 text-sm text-green-600">
+                        <CheckCircle2 className="h-4 w-4" />
+                        <span>Verified Provider</span>
+                      </div>
+                    )}
+                  </div>
+                  <Button asChild className="w-full mt-4" variant="outline">
+                    <Link href={`/providers/${provider.id}`}>
+                      View Profile
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <Button asChild size="lg" variant="outline" className="border-2">
+              <Link href="/search">
+                View All Providers
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Recent Reviews Section */}
+      <section className="py-24 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="mb-16 text-center">
+            <h2 className="mb-4 text-4xl font-bold text-gray-900 sm:text-5xl">
+              What Our Customers Say
+            </h2>
+            <p className="mx-auto max-w-2xl text-lg text-gray-600">
+              Real reviews from real customers
+            </p>
+          </div>
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {recentReviews.map((review) => (
+              <Card key={review.id} className="h-full">
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <Avatar>
+                      <AvatarImage src={review.customerAvatar} alt={review.customerName} />
+                      <AvatarFallback>
+                        {review.customerName.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-semibold">{review.customerName}</p>
+                      <div className="flex items-center gap-1">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i < review.rating
+                                ? "fill-yellow-400 text-yellow-400"
+                                : "text-gray-300"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700 leading-relaxed">{review.comment}</p>
+                  <p className="text-sm text-gray-500 mt-3">
+                    {new Date(review.createdAt).toLocaleDateString()}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Stats Section */}
-      <section className="py-16">
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {[
