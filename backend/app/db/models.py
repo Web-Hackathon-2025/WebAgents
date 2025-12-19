@@ -348,3 +348,37 @@ class Dispute(Base):
     # Relationships
     booking = relationship("Booking", back_populates="dispute")
 
+
+class PaymentTransaction(Base):
+    """Payment transactions for bookings."""
+    __tablename__ = "payment_transactions"
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    booking_id = Column(UUID(as_uuid=True), ForeignKey("bookings.id"), nullable=False, index=True)
+    transaction_id = Column(String(255), unique=True, nullable=False, index=True)  # External gateway ID
+    payment_intent_id = Column(String(255), unique=True, nullable=False, index=True)  # Idempotency key
+    amount = Column(DECIMAL(10, 2), nullable=False)
+    currency = Column(String(3), default="PKR", nullable=False)
+    status = Column(
+        SQLEnum(
+            "initiated", "processing", "completed", "failed", 
+            "refunded", "partially_refunded",
+            name="transaction_status"
+        ),
+        default="initiated",
+        nullable=False,
+        index=True
+    )
+    payment_method = Column(String(50))  # e.g., "card", "wallet", "cash"
+    gateway_response = Column(JSONB)  # Raw response from payment gateway
+    failure_reason = Column(Text)
+    refund_amount = Column(DECIMAL(10, 2))
+    refunded_at = Column(TIMESTAMP)
+    metadata = Column(JSONB)  # Additional transaction metadata
+    created_at = Column(TIMESTAMP, server_default=func.now(), nullable=False, index=True)
+    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), nullable=False)
+    completed_at = Column(TIMESTAMP)
+    
+    # Relationships
+    booking = relationship("Booking", backref="payment_transactions")
+

@@ -42,3 +42,21 @@ class BadRequestError(KarigarException):
     def __init__(self, detail: str = "Bad request"):
         super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail=detail)
 
+
+class PaymentError(KarigarException):
+    """Payment processing error."""
+    def __init__(self, detail: str = "Payment processing failed"):
+        super().__init__(status_code=status.HTTP_402_PAYMENT_REQUIRED, detail=detail)
+
+
+class DatabaseError(KarigarException):
+    """Database operation error."""
+    def __init__(self, detail: str = "Database operation failed"):
+        super().__init__(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=detail)
+
+
+class AIServiceError(KarigarException):
+    """AI service error."""
+    def __init__(self, detail: str = "AI service unavailable"):
+        super().__init__(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=detail)
+

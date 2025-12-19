@@ -21,12 +21,18 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 10080  # 7 days
     
-    # OpenAI
-    OPENAI_API_KEY: str
+    # AI Configuration
+    AI_PROVIDER: str = "gemini"  # "openai" or "gemini"
+    OPENAI_API_KEY: Optional[str] = None
     OPENAI_MODEL: str = "gpt-4o-mini"
+    GEMINI_API_KEY: Optional[str] = None
+    GEMINI_MODEL: str = "gemini-1.5-flash"  # or "gemini-1.5-pro"
+    AI_TIMEOUT_SECONDS: int = 30
+    AI_MAX_RETRIES: int = 3
     
     # Redis
     REDIS_URL: str = "redis://localhost:6379"
+    REDIS_MAX_CONNECTIONS: int = 50
     
     # Google Maps
     GOOGLE_MAPS_API_KEY: Optional[str] = None

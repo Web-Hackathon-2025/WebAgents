@@ -2,6 +2,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional
 import openai
+import asyncio
 from datetime import datetime
 
 from app.core.config import settings
@@ -16,13 +17,27 @@ class BaseAgent(ABC):
     
     def __init__(self, agent_name: str):
         self.agent_name = agent_name
-        self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
-        self.model = settings.OPENAI_MODEL
+        self.provider = settings.AI_PROVIDER
+        
+        # Configure AI client based on provider
+        if self.provider == "gemini":
+            # Gemini via OpenAI-compatible API
+            self.client = openai.AsyncOpenAI(
+                api_key=settings.GEMINI_API_KEY,
+                base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+            )
+            self.model = settings.GEMINI_MODEL
+        else:
+            # OpenAI
+            self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+            self.model = settings.OPENAI_MODEL
+            
         self.prompt_cache = get_prompt_cache()
         self.circuit_breaker = CircuitBreaker(
             failure_threshold=5,
             timeout=60.0
         )
+        self.timeout = settings.AI_TIMEOUT_SECONDS
     
     @abstractmethod
     def get_system_prompt(self) -> str:
@@ -68,13 +83,17 @@ class BaseAgent(ABC):
             # Execute with retry and circuit breaker
             async def execute_with_retry():
                 return await retry_with_backoff(
-                    self._call_openai,
+                    self._call_ai,
                     system_prompt=system_prompt,
                     user_prompt=user_prompt,
                     context=context
                 )
             
-            response = await self.circuit_breaker.call_async(execute_with_retry)
+            # Add timeout to prevent hanging
+            response = await asyncio.wait_for(
+                self.circuit_breaker.call_async(execute_with_retry),
+                timeout=self.timeout
+            )
             
             execution_time_ms = int((datetime.utcnow() - start_time).total_seconds() * 1000)
             
@@ -101,6 +120,26 @@ class BaseAgent(ABC):
             
             return response
             
+        except asyncio.TimeoutError as e:
+            execution_time_ms = int((datetime.utcnow() - start_time).total_seconds() * 1000)
+            error_msg = f"AI request timed out after {self.timeout}s"
+            
+            # Log failure
+            if db:
+                await self._log_execution(
+                    db,
+                    execution_context,
+                    context,
+                    None,
+                    execution_time_ms,
+                    success=False,
+                    error_message=error_msg,
+                    booking_id=booking_id
+                )
+            
+            # Return fallback response
+            return self._get_fallback_response(context, error_msg)
+            
         except Exception as e:
             execution_time_ms = int((datetime.utcnow() - start_time).total_seconds() * 1000)
             
@@ -120,13 +159,13 @@ class BaseAgent(ABC):
             # Return fallback response
             return self._get_fallback_response(context, str(e))
     
-    async def _call_openai(
+    async def _call_ai(
         self,
         system_prompt: str,
         user_prompt: str,
         context: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Call OpenAI API."""
+        """Call AI API (Gemini or OpenAI)."""
         response = await self.client.chat.completions.create(
             model=self.model,
             messages=[
